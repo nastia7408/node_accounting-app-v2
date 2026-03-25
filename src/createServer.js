@@ -17,7 +17,7 @@ function createServer() {
     const { name } = req.body;
 
     if (!name) {
-      return res.sendStatus(400).send('Name is required');
+      return res.status(400).send('Name is required');
     }
 
     const newUser = {
@@ -78,15 +78,13 @@ function createServer() {
     const { userId, spentAt, title, amount, category, note } = req.body;
 
     if (!userId || !spentAt || !title || !amount || !category) {
-      return res.sendStatus(400).send('Missing required expense fields');
+      return res.status(400).send('Missing required expense fields');
     }
 
     const userExists = users.some((u) => u.id === userId);
 
     if (!userExists) {
-      return res
-        .sendStatus(400)
-        .send('User with the given userId does not exist');
+      return res.status(400).send('User with the given userId does not exist');
     }
 
     const newExpenses = {
@@ -171,10 +169,6 @@ function createServer() {
         return res.status(400).send('User not found');
       }
       expense.userId = userId;
-    }
-
-    if (!expense) {
-      return res.status(404).send('Expense not found');
     }
 
     if (spentAt !== undefined) {
