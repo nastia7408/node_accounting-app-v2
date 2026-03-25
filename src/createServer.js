@@ -156,19 +156,46 @@ function createServer() {
 
   app.patch('/expenses/:id', (req, res) => {
     const expenseId = Number(req.params.id);
-    const { userId, spentAt, title, amount, category, note } = req.body;
     const expense = expenses.find((e) => e.id === expenseId);
 
     if (!expense) {
       return res.status(404).send('Expense not found');
     }
 
-    expense.userId = userId;
-    expense.spentAt = spentAt;
-    expense.title = title;
-    expense.amount = amount;
-    expense.category = category;
-    expense.note = note;
+    const { userId, spentAt, title, amount, category, note } = req.body;
+
+    if (userId !== undefined) {
+      const userExists = users.some((u) => u.id === userId);
+
+      if (!userExists) {
+        return res.status(400).send('User not found');
+      }
+      expense.userId = userId;
+    }
+
+    if (!expense) {
+      return res.status(404).send('Expense not found');
+    }
+
+    if (spentAt !== undefined) {
+      expense.spentAt = spentAt;
+    }
+
+    if (title !== undefined) {
+      expense.title = title;
+    }
+
+    if (amount !== undefined) {
+      expense.amount = amount;
+    }
+
+    if (category !== undefined) {
+      expense.category = category;
+    }
+
+    if (note !== undefined) {
+      expense.note = note;
+    }
 
     res.json(expense);
   });
