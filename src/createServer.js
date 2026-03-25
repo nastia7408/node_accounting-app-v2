@@ -17,7 +17,7 @@ function createServer() {
     const { name } = req.body;
 
     if (!name) {
-      return res.sendStatus(400);
+      return res.sendStatus(400).send('Name is required');
     }
 
     const newUser = {
@@ -78,13 +78,15 @@ function createServer() {
     const { userId, spentAt, title, amount, category, note } = req.body;
 
     if (!userId || !spentAt || !title || !amount || !category) {
-      return res.sendStatus(400);
+      return res.sendStatus(400).send('Missing required expense fields');
     }
 
     const userExists = users.some((u) => u.id === userId);
 
     if (!userExists) {
-      return res.sendStatus(400);
+      return res
+        .sendStatus(400)
+        .send('User with the given userId does not exist');
     }
 
     const newExpenses = {
@@ -129,6 +131,7 @@ function createServer() {
 
   app.get('/expenses/:id', (req, res) => {
     const expenseId = Number(req.params.id);
+
     const expense = expenses.find((e) => e.id === expenseId);
 
     if (!expense) {
@@ -153,14 +156,19 @@ function createServer() {
 
   app.patch('/expenses/:id', (req, res) => {
     const expenseId = Number(req.params.id);
-
+    const { userId, spentAt, title, amount, category, note } = req.body;
     const expense = expenses.find((e) => e.id === expenseId);
 
     if (!expense) {
       return res.status(404).send('Expense not found');
     }
 
-    Object.assign(expense, req.body);
+    expense.userId = userId;
+    expense.spentAt = spentAt;
+    expense.title = title;
+    expense.amount = amount;
+    expense.category = category;
+    expense.note = note;
 
     res.json(expense);
   });
